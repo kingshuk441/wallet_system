@@ -1,0 +1,27 @@
+package com.example.wallet_system.repositories;
+
+import com.example.wallet_system.entities.Transaction;
+import com.example.wallet_system.enums.TransactionStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+
+    List<Transaction> findByFromWalletId(Long walletId);
+
+    List<Transaction> findByToWalletId(Long walletId);
+
+    @Query("SELECT t FROM Transaction t WHERE t.fromWallet.id = :walletId OR t.toWallet.id = :walletId")
+    List<Transaction> findByWalletId(@Param("walletId") Long walletId);
+
+    List<Transaction> findByStatus(TransactionStatus status);
+
+    List<Transaction> findBySagaInstanceId(Long sagaInstanceId);
+
+
+}
