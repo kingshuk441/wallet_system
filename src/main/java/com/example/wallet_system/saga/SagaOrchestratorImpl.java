@@ -52,7 +52,7 @@ public class SagaOrchestratorImpl implements ISagaOrchestrator {
         if (executionStep == null) throw new RuntimeException("executionStep is null");
 
         // fetch saga step from db if exists else create new saga step with status PENDING
-        SagaStep sagaStepDB = sagaStepRepository.findBySagaInstanceIdAndStepNameAndStatus(sagaId, stepName, StepStatus.PENDING).orElse(SagaStep.builder().sagaInstanceId(sagaId).stepName(stepName).stepStatus(StepStatus.PENDING).build());
+        SagaStep sagaStepDB = sagaStepRepository.findBySagaInstanceIdAndStepNameAndStatus(sagaId, stepName, StepStatus.PENDING).orElse(SagaStep.builder().sagaInstanceId(sagaId).stepName(stepName).status(StepStatus.PENDING).build());
 
         if (sagaStepDB.getId() == null) {
             sagaStepRepository.save(sagaStepDB);
@@ -60,14 +60,14 @@ public class SagaOrchestratorImpl implements ISagaOrchestrator {
 
         try {
             SagaContext sagaContext = objectMapper.readValue(sagaInstance.getContext(), SagaContext.class);
-            sagaStepDB.setStepStatus(StepStatus.RUNNING);
+            sagaStepDB.setStatus(StepStatus.RUNNING);
             sagaStepRepository.save(sagaStepDB);
             boolean success = executionStep.execute(sagaContext);
 
 
             if (success) {
                 log.info("Step Executed Successfully: {}", stepName);
-                sagaStepDB.setStepStatus(StepStatus.COMPLETED);
+                sagaStepDB.setStatus(StepStatus.COMPLETED);
                 sagaStepRepository.save(sagaStepDB);
 
                 sagaInstance.setCurrentStep(stepName);
@@ -76,14 +76,14 @@ public class SagaOrchestratorImpl implements ISagaOrchestrator {
 
                 return true;
             } else {
-                sagaStepDB.setStepStatus(StepStatus.FAILED);
+                sagaStepDB.setStatus(StepStatus.FAILED);
                 sagaStepRepository.save(sagaStepDB);
                 log.info("Error while Step Execution: {}", stepName);
                 return false;
             }
 
         } catch (Exception e) {
-            sagaStepDB.setStepStatus(StepStatus.FAILED);
+            sagaStepDB.setStatus(StepStatus.FAILED);
             sagaStepRepository.save(sagaStepDB);
             log.error("Failed Step execution: {}", sagaInstance.getCurrentStep());
             return false;
@@ -110,26 +110,26 @@ public class SagaOrchestratorImpl implements ISagaOrchestrator {
 
             try {
                 SagaContext sagaContext = objectMapper.readValue(sagaInstance.getContext(), SagaContext.class);
-                sagaStepDB.setStepStatus(StepStatus.COMPENSATING);
+                sagaStepDB.setStatus(StepStatus.COMPENSATING);
                 sagaStepRepository.save(sagaStepDB);
                 boolean success = executionStep.compensate(sagaContext);
 
 
                 if (success) {
                     log.info("Step Compensated Successfully: {}", stepName);
-                    sagaStepDB.setStepStatus(StepStatus.COMPENSATED);
+                    sagaStepDB.setStatus(StepStatus.COMPENSATED);
                     sagaStepRepository.save(sagaStepDB);
 
                     return true;
                 } else {
-                    sagaStepDB.setStepStatus(StepStatus.FAILED);
+                    sagaStepDB.setStatus(StepStatus.FAILED);
                     sagaStepRepository.save(sagaStepDB);
                     log.info("Error while Step Execution: {}", stepName);
                     return false;
                 }
 
             } catch (Exception e) {
-                sagaStepDB.setStepStatus(StepStatus.FAILED);
+                sagaStepDB.setStatus(StepStatus.FAILED);
                 sagaStepRepository.save(sagaStepDB);
                 log.error("Failed Step execution: {}", sagaInstance.getCurrentStep());
                 return false;

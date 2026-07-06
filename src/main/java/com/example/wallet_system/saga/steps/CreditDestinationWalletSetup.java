@@ -5,7 +5,6 @@ import com.example.wallet_system.enums.SagaStepType;
 import com.example.wallet_system.repositories.WalletRepository;
 import com.example.wallet_system.saga.ISagaStep;
 import com.example.wallet_system.saga.SagaContext;
-import groovy.util.logging.Slf4j;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
@@ -13,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.Optional;
 
 
 @AllArgsConstructor
@@ -32,7 +30,7 @@ public class CreditDestinationWalletSetup implements ISagaStep {
         log.info("Crediting destination wallet with id: {} with amount: {}", toWalletId, amount);
 
         // Step 2: fetch the destination wallet from the database with a lock
-        Wallet wallet = walletRepository.findByIdWithLock(toWalletId)
+        Wallet wallet = walletRepository.findByUserIdWithLock(toWalletId)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
         // Step 3: Credit the destination wallet
@@ -40,8 +38,10 @@ public class CreditDestinationWalletSetup implements ISagaStep {
         log.info("Wallet fetched with balance: {}", wallet.getBalance());
         context.put("originalToWalletBalance", wallet.getBalance());
         try {
-            wallet.creditBalance(amount);
-            walletRepository.save(wallet);
+//            wallet.creditBalance(amount);
+//            walletRepository.save(wallet);
+
+            walletRepository.updateBalanceByUserId(toWalletId, wallet.getBalance().add(amount));
             log.info("Wallet saved with balance: {}", wallet.getBalance());
             context.put("toWalletBalanceAfterCredit", wallet.getBalance());
             log.info("Credit destination Wallet Step executed Successfully");
@@ -61,7 +61,7 @@ public class CreditDestinationWalletSetup implements ISagaStep {
         log.info("Compensating credit of destination wallet with id: {} with amount: {}", toWalletId, amount);
 
         // Step 2: fetch the destination wallet from the database with a lock
-        Wallet wallet = walletRepository.findByIdWithLock(toWalletId)
+        Wallet wallet = walletRepository.findByUserIdWithLock(toWalletId)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
         // Step 3: Credit the destination wallet
@@ -69,8 +69,10 @@ public class CreditDestinationWalletSetup implements ISagaStep {
         log.info("Wallet fetched with balance: {}", wallet.getBalance());
         context.put("toWalletBalanceBeforeCreditCompensation", wallet.getBalance());
         try {
-            wallet.deductBalance(amount);
-            walletRepository.save(wallet);
+//            wallet.deductBalance(amount);
+//            walletRepository.save(wallet);
+
+            walletRepository.updateBalanceByUserId(toWalletId, wallet.getBalance().subtract(amount));
             log.info("Wallet saved with balance: {}", wallet.getBalance());
             context.put("toWalletBalanceAfterCreditCompensation", wallet.getBalance());
             log.info("Credit Compensation of destination Wallet Step executed Successfully");

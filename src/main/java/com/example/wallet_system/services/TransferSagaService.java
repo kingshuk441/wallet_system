@@ -1,11 +1,9 @@
 package com.example.wallet_system.services;
 
-import com.example.wallet_system.entities.SagaStep;
 import com.example.wallet_system.entities.Transaction;
 import com.example.wallet_system.enums.SagaStepType;
 import com.example.wallet_system.saga.ISagaOrchestrator;
 import com.example.wallet_system.saga.SagaContext;
-import com.example.wallet_system.saga.SagaOrchestratorImpl;
 import com.example.wallet_system.saga.SagaStepFactory;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -13,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -66,7 +63,7 @@ public class TransferSagaService {
                     return;
                 }
             }
-            sagaOrchestrator.compensateSaga(sagaInstanceId);
+            sagaOrchestrator.completeSaga(sagaInstanceId);
 
         } catch (Exception e) {
             log.error("Saga instance id {} execute failed", sagaInstanceId, e);

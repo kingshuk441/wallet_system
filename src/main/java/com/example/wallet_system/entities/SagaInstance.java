@@ -32,7 +32,7 @@ public class SagaInstance {
 
     @Column(name = "status",nullable = false)
     @Enumerated(EnumType.STRING)
-    private SagaStatus status = SagaStatus.STARTED;
+    private SagaStatus status;
 
 
     @Column(name = "current_step")

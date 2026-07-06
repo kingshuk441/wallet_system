@@ -31,11 +31,12 @@ public class Transaction {
     private BigDecimal amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private TransactionStatus status = TransactionStatus.PENDING;
+    @Column(name = "status")
+    private TransactionStatus status;
+
     @Enumerated(EnumType.STRING)
-    @Column(name = "type", nullable = false)
-    private TransactionType type = TransactionType.TRANSFER;
+    @Column(name = "type")
+    private TransactionType type;
 
     @Column(name = "description")
     private String description;

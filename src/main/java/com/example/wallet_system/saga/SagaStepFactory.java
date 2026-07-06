@@ -1,14 +1,15 @@
 package com.example.wallet_system.saga;
 
 
-import com.example.wallet_system.entities.SagaStep;
 import com.example.wallet_system.enums.SagaStepType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
+@Component
 public class SagaStepFactory {
 
     private final Map<String, ISagaStep> sagaStepsMap;

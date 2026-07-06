@@ -2,6 +2,7 @@ package com.example.wallet_system.services;
 
 import com.example.wallet_system.entities.Transaction;
 import com.example.wallet_system.enums.TransactionStatus;
+import com.example.wallet_system.enums.TransactionType;
 import com.example.wallet_system.repositories.TransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,8 @@ public class TransactionService {
                 .description(desc)
                 .fromWalletId(fromWalletId)
                 .toWalletId(toWalletId)
+                .status(TransactionStatus.PENDING)
+                .type(TransactionType.TRANSFER)
                 .build();
 
         transaction = transactionRepository.save(transaction);

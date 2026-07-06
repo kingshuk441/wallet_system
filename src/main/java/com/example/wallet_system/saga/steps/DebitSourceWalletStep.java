@@ -24,12 +24,12 @@ public class DebitSourceWalletStep implements ISagaStep {
     @Transactional
     public boolean execute(SagaContext context) {
         // Step 1 : get the source wallet id from context
-        Long toWalletId = context.getLong("fromWalletId");
+        Long fromWalletId = context.getLong("fromWalletId");
         BigDecimal amount = context.getBigDecimal("amount");
-        log.info("Debiting source wallet with id: {} with amount: {}", toWalletId, amount);
+        log.info("Debiting source wallet with id: {} with amount: {}", fromWalletId, amount);
 
         // Step 2: fetch the source wallet from the database with a lock
-        Wallet wallet = walletRepository.findByIdWithLock(toWalletId)
+        Wallet wallet = walletRepository.findByUserIdWithLock(fromWalletId)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
         // Step 3: Debit the source wallet
@@ -37,8 +37,10 @@ public class DebitSourceWalletStep implements ISagaStep {
         log.info("Wallet fetched with balance: {}", wallet.getBalance());
         context.put("originalSourceWalletBalance", wallet.getBalance());
         try {
-            wallet.deductBalance(amount);
-            walletRepository.save(wallet);
+//            wallet.deductBalance(amount);
+//            walletRepository.save(wallet);
+
+            walletRepository.updateBalanceByUserId(fromWalletId, wallet.getBalance().subtract(amount));
             log.info("Wallet saved with balance: {}", wallet.getBalance());
             context.put("sourceWalletBalanceAfterDebit", wallet.getBalance());
             log.info("Debit source Wallet Step executed Successfully");
@@ -53,12 +55,12 @@ public class DebitSourceWalletStep implements ISagaStep {
     @Transactional
     public boolean compensate(SagaContext context) {
         // Step 1 : get the source wallet id from context
-        Long toWalletId = context.getLong("fromWalletId");
+        Long fromWalletId = context.getLong("fromWalletId");
         BigDecimal amount = context.getBigDecimal("amount");
-        log.info("Compensating source wallet with id: {} with amount: {}", toWalletId, amount);
+        log.info("Compensating source wallet with id: {} with amount: {}", fromWalletId, amount);
 
         // Step 2: fetch the destination wallet from the database with a lock
-        Wallet wallet = walletRepository.findByIdWithLock(toWalletId)
+        Wallet wallet = walletRepository.findByUserIdWithLock(fromWalletId)
                 .orElseThrow(() -> new RuntimeException("Wallet not found"));
 
         // Step 3: Debit the destination wallet
@@ -66,8 +68,10 @@ public class DebitSourceWalletStep implements ISagaStep {
         context.put("sourceWalletBalanceBeforeDebitCompensation", wallet.getBalance());
         log.info("Wallet fetched with balance: {}", wallet.getBalance());
         try {
-            wallet.creditBalance(amount);
-            walletRepository.save(wallet);
+//            wallet.creditBalance(amount);
+//            walletRepository.save(wallet);
+
+            walletRepository.updateBalanceByUserId(fromWalletId, wallet.getBalance().add(amount));
             log.info("Wallet saved with balance: {}", wallet.getBalance());
             context.put("sourceWalletBalanceAfterDebitCompensation", wallet.getBalance());
             log.info("Debit source Wallet Compensation Step executed Successfully");

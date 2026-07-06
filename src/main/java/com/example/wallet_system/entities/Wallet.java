@@ -27,7 +27,7 @@ public class Wallet {
 
 
     @Column(name = "balance", nullable = false)
-    private BigDecimal balance =  BigDecimal.ZERO;
+    private BigDecimal balance;
 
 
     public boolean hasSufficientBalance(BigDecimal balance) {

@@ -1,6 +1,5 @@
 package com.example.wallet_system.config;
 
-import com.example.wallet_system.entities.SagaStep;
 import com.example.wallet_system.enums.SagaStepType;
 import com.example.wallet_system.saga.ISagaStep;
 import com.example.wallet_system.saga.steps.CreditDestinationWalletSetup;

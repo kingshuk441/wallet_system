@@ -1,55 +1,8 @@
--- CREATE TABLE IF NOT EXISTS `saga_instance` (
---                                id BIGSERIAL PRIMARY KEY,
---                                context JSON,
---                                status VARCHAR(255) NOT NULL DEFAULT 'STARTED',
---                                current_step VARCHAR(255)
--- );
---
--- CREATE TABLE IF NOT EXISTS saga_step (
---                                          id BIGSERIAL PRIMARY KEY,
---                                          saga_instance_id BIGINT NOT NULL,
---                                          step_name VARCHAR(255) NOT NULL,
---     status VARCHAR(255) NOT NULL,
---     error_message VARCHAR(255),
---     step_data JSON,
---
---     CONSTRAINT fk_saga_step_instance
---     FOREIGN KEY (saga_instance_id)
---     REFERENCES saga_instance (id)
---     ON DELETE CASCADE
---     );
--- CREATE INDEX IF NOT EXISTS idx_saga_step_instance_id
---     ON saga_step (saga_instance_id);
---
---
--- CREATE TABLE IF NOT EXISTS "transaction" (
---                                              id BIGSERIAL PRIMARY KEY,
---                                              from_wallet_id BIGINT NOT NULL,
---                                              to_wallet_id BIGINT NOT NULL,
---                                              amount NUMERIC(19, 4) NOT NULL, -- Perfect for BigDecimal currency values
---     status VARCHAR(255) NOT NULL DEFAULT 'PENDING',
---     type VARCHAR(255) NOT NULL DEFAULT 'TRANSFER',
---     description VARCHAR(255),
---     saga_instance_id BIGINT,
---
---     CONSTRAINT fk_transaction_saga_instance
---     FOREIGN KEY (saga_instance_id)
---     REFERENCES saga_instance (id)
---     ON DELETE SET NULL
---     );
---
--- -- Performance index for looking up transactions linked to a saga orchestration
--- CREATE INDEX IF NOT EXISTS idx_transaction_saga_instance_id
---     ON "transaction" (saga_instance_id);
---
---
--- CREATE TABLE IF NOT EXISTS wallet (
---                                       id BIGSERIAL PRIMARY KEY,
---                                       user_id BIGINT NOT NULL,
---                                       is_active BOOLEAN NOT NULL DEFAULT TRUE,
---                                       balance NUMERIC(19, 4) NOT NULL DEFAULT 0.0000
---     );
---
--- -- Index user_id since you'll look up a user's wallet frequently
--- CREATE INDEX IF NOT EXISTS idx_wallet_user_id
---     ON wallet (user_id);
+
+CREATE TABLE IF NOT EXISTS `saga_instance` (
+                                               id BIGINT
+                                               AUTO_INCREMENT PRIMARY KEY,
+                                               context JSON,
+                                               status VARCHAR(255) NOT NULL DEFAULT 'STARTED',
+    current_step VARCHAR(255)
+    );

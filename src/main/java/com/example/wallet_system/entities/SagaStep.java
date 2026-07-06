@@ -21,15 +21,14 @@ public class SagaStep {
     private Long id;
 
 
-    @Column(name = "saga_instance_id",nullable = false)
+    @Column(name = "saga_instance_id")
     private Long sagaInstanceId;
-
     @Column(name = "step_name",nullable = false)
     private String stepName;
 
-    @Column(name = "status",nullable = false)
+    @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private StepStatus stepStatus;
+    private StepStatus status;
 
     @Column(name = "error_message")
     private String errorMessage;

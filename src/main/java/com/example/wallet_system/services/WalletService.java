@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -19,10 +18,12 @@ public class WalletService {
 
 
     public Wallet createWallet(Long id) {
-        log.info("Creating wallet for user : {}", id);
 
-        Wallet wallet = Wallet.builder().id(id)
+        log.info("Wallet creating with id: {} in shardwallet{}", id, id % 2 + 1);
+
+        Wallet wallet = Wallet.builder()
                 .balance(BigDecimal.ZERO)
+                .userId(id)
                 .isActive(true)
                 .build();
 
@@ -32,44 +33,34 @@ public class WalletService {
     }
 
 
-    public Wallet getWallet(Long id) {
-        log.info("Getting wallet for user : {}", id);
-        return walletRepository.findById(id).orElseThrow(() -> new RuntimeException("Wallet not found for user: " + id));
+    public Wallet getWallet(Long userId) {
+        log.info("Getting wallet for user : {}", userId);
+        return walletRepository.findByUserId(userId).getFirst();
     }
 
 
-    public List<Wallet> getWalletByUserId(Long userId) {
-        return walletRepository.findByUserId(userId);
+    public Wallet getWalletByUserId(Long userId) {
+        return walletRepository.findByUserId(userId).getFirst();
     }
 
     @Transactional
-    public void debit(Long walletId, BigDecimal amount) {
-        Wallet wallet = getWallet(walletId);
+    public void debit(Long userId, BigDecimal amount) {
+        Wallet wallet = getWalletByUserId(userId);
         log.info("Debitting wallet for user : {}", wallet);
-        try {
-            wallet.deductBalance(amount);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        walletRepository.save(wallet);
+        walletRepository.updateBalanceByUserId(userId, wallet.getBalance().subtract(amount));
         log.info("Wallet debited: {}", wallet);
     }
 
     @Transactional
-    public void credit(Long walletId, BigDecimal amount) {
-        Wallet wallet = getWallet(walletId);
+    public void credit(Long userId, BigDecimal amount) {
+        Wallet wallet = getWalletByUserId(userId);
         log.info("Credit wallet for user : {}", wallet);
-        try {
-            wallet.creditBalance(amount);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-        walletRepository.save(wallet);
+        walletRepository.updateBalanceByUserId(userId, wallet.getBalance().add(amount));
         log.info("Wallet credited: {}", wallet);
     }
 
-    public BigDecimal getBalance(Long walletId) {
-        Wallet wallet = getWallet(walletId);
+    public BigDecimal getBalance(Long userId) {
+        Wallet wallet = getWalletByUserId(userId);
         log.info("Getting balance for wallet : {}", wallet);
         return wallet.getBalance();
     }
