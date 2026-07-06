@@ -174,6 +174,9 @@ public class SagaOrchestratorImpl implements ISagaOrchestrator {
 
         sagaInstanceRepository.save(sagaInstance);
         log.info("Saga instance has been Failed with id {}", sagaInstance.getId());
+
+        compensateSaga(sagaInstance.getId());
+        log.info("Saga compensated {}", sagaInstance.getId());
     }
 
     @Override
