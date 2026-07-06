@@ -1,6 +1,7 @@
 package com.example.wallet_system.saga.steps;
 
 import com.example.wallet_system.entities.Wallet;
+import com.example.wallet_system.enums.SagaStepType;
 import com.example.wallet_system.repositories.WalletRepository;
 import com.example.wallet_system.saga.ISagaStep;
 import com.example.wallet_system.saga.SagaContext;
@@ -82,6 +83,6 @@ public class CreditDestinationWalletSetup implements ISagaStep {
 
     @Override
     public String getStepName() {
-        return "CreditDestinationWalletSetup";
+        return SagaStepType.CREDIT_DESTINATION_WALLET_STEP.toString();
     }
 }

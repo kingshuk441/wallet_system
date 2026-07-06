@@ -29,7 +29,7 @@ public class SagaStep {
 
     @Column(name = "status",nullable = false)
     @Enumerated(EnumType.STRING)
-    private StepStatus sagaStepStatus;
+    private StepStatus stepStatus;
 
     @Column(name = "error_message")
     private String errorMessage;

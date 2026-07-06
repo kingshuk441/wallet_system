@@ -35,7 +35,7 @@ public class SagaInstance {
     private SagaStatus status = SagaStatus.STARTED;
 
 
-    @Column(name = "current_step",nullable = false)
+    @Column(name = "current_step")
     private String currentStep;
 
 }

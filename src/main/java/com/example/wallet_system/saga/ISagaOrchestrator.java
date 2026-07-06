@@ -12,11 +12,11 @@ public interface ISagaOrchestrator {
 
     SagaInstance getSagaInstance(Long sagaId);
 
-    void compensateSaga(SagaInstance sagaInstance); // revert all completed saga steps
+    void compensateSaga(Long sagaId); // revert all completed saga steps
 
-    void failSaga(SagaInstance sagaInstance); // mark saga as failed
+    void failSaga(Long sagaId); // mark saga as failed
 
-    void completeSaga(SagaInstance sagaInstance);
+    void completeSaga(Long sagaId);
 
 
 }

@@ -1,6 +1,7 @@
 package com.example.wallet_system.saga.steps;
 
 import com.example.wallet_system.entities.Transaction;
+import com.example.wallet_system.enums.SagaStepType;
 import com.example.wallet_system.enums.TransactionStatus;
 import com.example.wallet_system.repositories.TransactionRepository;
 import com.example.wallet_system.saga.ISagaStep;
@@ -64,6 +65,6 @@ public class UpdateTransactionStatus implements ISagaStep {
 
     @Override
     public String getStepName() {
-        return "UpdateTransactionStatus";
+        return SagaStepType.UPDATE_TRANSACTION_STATUS_STEP.toString();
     }
 }
