@@ -142,6 +142,7 @@ public class SagaOrchestratorImpl implements ISagaOrchestrator {
     }
 
     @Override
+    @Transactional
     public void compensateSaga(Long sagaId) {
 
 
@@ -164,6 +165,7 @@ public class SagaOrchestratorImpl implements ISagaOrchestrator {
     }
 
     @Override
+    @Transactional
     public void failSaga(Long sagaId) {
 
         SagaInstance sagaInstance = sagaInstanceRepository.findById(sagaId).orElseThrow(() -> new RuntimeException("Saga instance with id " + sagaId + " not found"));
@@ -175,6 +177,7 @@ public class SagaOrchestratorImpl implements ISagaOrchestrator {
     }
 
     @Override
+    @Transactional
     public void completeSaga(Long sagaId) {
 
         SagaInstance sagaInstance = sagaInstanceRepository.findById(sagaId).orElseThrow(() -> new RuntimeException("Saga instance with id " + sagaId + " not found"));
